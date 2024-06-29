@@ -2,6 +2,7 @@ module backend
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // Jwt工具包 -有漏洞
+	github.com/gin-gonic/gin v1.10.0 // web框架
 	github.com/gocolly/colly/v2 v2.1.0 // 爬虫框架
 )
 

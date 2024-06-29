@@ -15,7 +15,46 @@
 
 package main
 
-// import "fmt"
+import (
+	"backend/administrator"
+	"backend/administrator/controller"
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
 func main() {
-	//	fmt.Println("Hello World!")
+	// 启动Web服务
+	engine := gin.Default()
+	engine.Use(cors())
+	// 注册Controller
+	registry(engine)
+	_ = engine.Run("127.0.0.1:8083")
+
+	// 启动爬虫服务
+	// ...
+}
+
+func registry(engine *gin.Engine) {
+	cons := []administrator.IController{
+		&controller.LoginController{},
+	}
+
+	for _, con := range cons {
+		con.Claim().Init(engine)
+	}
+}
+
+func cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		method := c.Request.Method
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE")
+		c.Header("Access-Control-Expose-Headers", "*")
+
+		if method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+		}
+		c.Next()
+	}
 }
