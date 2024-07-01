@@ -11,12 +11,12 @@ type JwtUtil struct {
 }
 
 type Claim struct {
-	Id   int
+	Id   string
 	Name string
 	jwt.StandardClaims
 }
 
-func (j JwtUtil) GetToken(id int, name string, expire time.Duration) string {
+func (j JwtUtil) GetToken(id string, name string, expire time.Duration) string {
 	c := Claim{Id: id, Name: name, StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(expire).Unix(), Issuer: "learn-GSP"}}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	res, _ := token.SignedString([]byte(salt))

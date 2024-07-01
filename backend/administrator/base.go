@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+const DB = "administrator"
+
 type Controller struct {
 	Prefix  string
 	Handles []Handle

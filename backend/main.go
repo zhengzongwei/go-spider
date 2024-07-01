@@ -18,17 +18,24 @@ package main
 import (
 	"backend/administrator"
 	"backend/administrator/controller"
+	mongo_helper "backend/mongo-helper"
+	"backend/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
+	"strings"
 )
 
 func main() {
+	// 启动Mongodb服务
+	client := mongo_helper.GetMongoHelper().GetConnection()
+	defer client.Disconnect()
 	// 启动Web服务
 	engine := gin.Default()
-	engine.Use(cors())
+	engine.Use(cors(), validateToken())
 	// 注册Controller
 	registry(engine)
-	_ = engine.Run("127.0.0.1:8083")
+	_ = engine.Run(os.Getenv("GO_SPIDER_SERVER"))
 
 	// 启动爬虫服务
 	// ...
@@ -55,6 +62,31 @@ func cors() gin.HandlerFunc {
 		if method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusOK)
 		}
+		c.Next()
+	}
+}
+
+var jwt = utils.JwtUtil{}
+var white = [1]string{"/"}
+
+func validateToken() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uri := c.Request.RequestURI
+		token := c.GetHeader("go-spider-token")
+		check := true
+		for _, w := range white {
+			if strings.Contains(uri, w) {
+				// 白名单，不校验Token
+				check = false
+				break
+			}
+		}
+
+		if check && !jwt.ValidateToken(token) {
+			c.AbortWithStatusJSON(http.StatusOK, administrator.Response{Code: http.StatusInternalServerError, Msg: "权限不足，请登录!"})
+			return
+		}
+
 		c.Next()
 	}
 }

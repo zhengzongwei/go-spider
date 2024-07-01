@@ -1,12 +1,12 @@
 // 创建管理界面数据库
 // use administrator
 // 创建用户信息文档
-db.createCollection("sys_users",{
+db.createCollection("sys_users", {
     capped: false,
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["username","password","login_time"],
+            required: ["username", "password", "login_time"],
             properties: {
                 username: {
                     bsonType: "string",
@@ -38,4 +38,9 @@ db.createCollection("sys_users",{
 // 创建索引
 db.sys_user.createIndex({username: 1}, {unique: true})
 // 插入默认用户信息
-db.sys_user.insertOne({username: "go-spire@golang.com",password: "$2a$10$Mw7g19d5d7k0hhv1lbUU0.czsAG/Iz4PNglzMeNryuqrS1RmYIxx.",login_time: "1719782220"})
+db.sys_user.insertOne({
+    uuid: "1",
+    username: "go-spider@golang.com",
+    password: "$2a$10$Mw7g19d5d7k0hhv1lbUU0.czsAG/Iz4PNglzMeNryuqrS1RmYIxx.",
+    login_time: "1719782220"
+})
