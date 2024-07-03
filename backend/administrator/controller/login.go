@@ -42,7 +42,7 @@ func (l *LoginController) login(c *gin.Context) {
 	// 执行登录方法
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	mongodb := mongo_helper.GetMongoHelper().GetConnection().Client
+	mongodb := mongo_helper.GetMongoHelper().GetClientHelper().Client
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	user := &Users{}

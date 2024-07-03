@@ -28,8 +28,10 @@ import (
 
 func main() {
 	// 启动Mongodb服务
-	client := mongo_helper.GetMongoHelper().GetConnection()
+	client := mongo_helper.GetMongoHelper().GetClientHelper()
 	defer client.Disconnect()
+	go func() { client.KeepHeart() }()
+
 	// 启动Web服务
 	engine := gin.Default()
 	engine.Use(cors(), validateToken())
@@ -44,6 +46,7 @@ func main() {
 func registry(engine *gin.Engine) {
 	cons := []administrator.IController{
 		&controller.LoginController{},
+		&controller.TestController{},
 	}
 
 	for _, con := range cons {
